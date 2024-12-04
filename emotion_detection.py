@@ -6,12 +6,13 @@ def emotion_detector(text_to_analyse):
     url = 'https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict'
 
     # Create the payload with the text to be analyzed
-    myobj = { "raw_document": { "text": text_to_analyse } }
-
+    # myobj = { "raw_document": { "text": text_to_analyse } }
+    Input_json = { "raw_document": { "text": text_to_analyse } }
+    
     # Set the headers with the required model ID for the API
     header = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
-    Input_json = { "raw_document": { "text": text_to_analyse } }
-    print ("EL texto a analizar es :",Input_json)
+
+    print ("El texto a analizar es :",Input_json)
     # Make a POST request to the API with the payload and headers
     response = requests.post(url, json=Input_json, headers=header)
 
@@ -20,8 +21,7 @@ def emotion_detector(text_to_analyse):
 
     # If the response status code is 200, extract the label and score from the response
     if response.status_code == 200:
-        label = None 
-        # formatted_response['documentSentiment']['label']
+        label = None # formatted_response['documentSentiment']['label']
         score = formatted_response['documentSentiment']['score']
     # If the response status code is 500, set label and score to None
     elif response.status_code == 500:
