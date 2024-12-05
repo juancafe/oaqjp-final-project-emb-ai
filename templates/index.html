@@ -11,22 +11,62 @@
 <body>
     <div class="card">
         <div class="card-body">
-            <h1 class="center-heading">NLP - Emotion Detection</h1> 
-            <div style="padding: 25px 25px 25px 25px;">
-            <h2 class="mb-3">
-                <label class="form-label">Please enter the text to be analyzed</label>
-                <input type="textarea" class="form-control" id="textToAnalyze">
-            </h2>
+            <h1 class="center-heading">NLP - Emotion Detection</h1>
+            <div style="padding: 25px;">
+                <h2 class="mb-3">
+                    <label class="form-label">Please enter the text to be analyzed</label>
+                    <input type="textarea" class="form-control" id="textToAnalyze">
+                </h2>
 
-            <div style="padding: 25px 25px 25px 25px;">
-                <button onclick="RunSentimentAnalysis()" class="btn btn-secondary">Run Sentiment Analysis</button>
+                <div style="padding: 25px 0;">
+                    <button onclick="RunSentimentAnalysis()" class="btn btn-secondary">Run Sentiment Analysis</button>
+                </div>
+                <div style="padding: 25px;"></div>
+
+                <h2 class="mb-3">
+                    <label class="form-label">Result of Emotion Detection</label>
+                </h2>
+
+                <div id="system_response" style="padding: 25px;"></div>
+                <div id="error_message" style="color: red; padding-top: 15px;"></div>
             </div>
-            <div style="padding: 25px 25px 25px 25px;"></div>
-            <h2 class="mb-3">
-                <label class="form-label">Result of Emotion Detection</label>
-            </h2>
-
-            <div id="system_response" style="padding: 25px 25px 25px 25px;"></div>
         </div>
     </div>
 </body>
+<script>
+    let RunSentimentAnalysis = () => {
+        let textToAnalyze = document.getElementById("textToAnalyze").value;
+    
+        // Check if the input text is empty
+        if (!textToAnalyze.trim()) {
+            document.getElementById("system_response").innerHTML = "";
+            document.getElementById("system_response").innerHTML = "Invalid Text Please try again"";
+            document.getElementById("error_message").innerHTML = "Please enter some text.";
+            //window.alert("Invalid Text Please try again");
+            //alert("Invalid Text Please try again");
+            return;
+        }
+
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    document.getElementById("system_response").innerHTML = xhttp.responseText;
+                    document.getElementById("error_message").innerHTML = "";
+                } else if (this.status == 400) {
+                    let errorResponse = JSON.parse(xhttp.responseText);
+                    document.getElementById("system_response").innerHTML = "";
+                    document.getElementById("error_message").innerHTML = errorResponse.error;
+                } else {
+                    document.getElementById("system_response").innerHTML = "An unexpected error occurred.";
+                    document.getElementById("error_message").innerHTML = "";
+                }
+            }
+        };
+        // Make sure the text is encoded properly for URL parameters
+        xhttp.open("GET", "emotionDetector?textToAnalyze=" + encodeURIComponent(textToAnalyze), true);
+        xhttp.send();
+    }
+</script>
+
+</html>
